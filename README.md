@@ -50,12 +50,29 @@ Seu objetivo é comer a comida amarela brilhante para fazer sua cobra crescer o 
 ├── constants.ts            # Constantes do jogo (tamanho da grade, velocidade, cores)
 ├── types.ts                # Interfaces e enums do TypeScript
 ├── metadata.json           # Metadados da aplicação
+├── docs/
+│   └── architecture.md     # Documentação de arquitetura detalhada (C4/UML, decisões, fluxos)
 └── components/
     ├── GameBoard.tsx       # O canvas principal do jogo, lidando com a renderização e a lógica do jogo
     ├── GameOverScreen.tsx  # A tela exibida quando o jogo termina
     ├── Scoreboard.tsx      # Exibe as pontuações atual e máxima durante o jogo
     └── StartScreen.tsx     # A tela inicial para começar o jogo e ver as instruções
 ```
+
+## Arquitetura (sumário)
+
+Para detalhes completos da arquitetura (visão de alto nível, interações de componentes, fluxos de dados, decisões e restrições), consulte o documento:
+
+- docs/architecture.md
+
+Resumo:
+
+- SPA em React + TypeScript, empacotado com Vite.
+- Telas/Componentes: StartScreen → GameBoard (+ Scoreboard) → GameOverScreen.
+- Comunicação via props e callbacks: App mantém o estado (fase/score); GameBoard emite `onScore` e `onGameOver`.
+- Suporte a mobile: `mobile_controls.ts`, `mobile_screens.ts`, `mobile_styles.css`, e `advanced_mobile_features.ts`.
+- PWA: `pwa_files.js` para registro de Service Worker/manifest.
+- Contratos/valores compartilhados: `types.ts` e `constants.ts`.
 
 ## Como Executar Localmente
 
