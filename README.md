@@ -1,96 +1,99 @@
-# TURBIN4DA 7O7OSA - A Fiery Snake Game
+# TURBIN4DA 7O7OSA - Um Jogo da Cobrinha Ardente
 
-A modern reinterpretation of the classic Snake game, featuring an immersive fire-themed visual aesthetic. Experience the nostalgia of arcade gaming with dynamic fire effects, responsive controls, and a refined UI/UX design.
+Uma reinterpretação moderna do clássico jogo da Cobrinha, com uma estética visual imersiva com tema de fogo. Experimente a nostalgia dos jogos de arcade com efeitos de fogo dinâmicos, controles responsivos e um design de UI/UX refinado.
 
-This project was built with React, TypeScript, and Tailwind CSS, all running directly in the browser without a build step, leveraging ES modules and CDN imports.
+Este projeto foi construído com React, TypeScript e Tailwind CSS, tudo rodando diretamente no navegador sem uma etapa de compilação, aproveitando módulos ES e importações de CDN.
 
-## Features
+## Funcionalidades
 
-- **Classic Snake Gameplay**: The timeless fun of guiding a growing snake to eat food.
-- **Immersive Fire Theme**: A visually striking aesthetic with a dark, fiery color palette and glowing effects powered by the HTML5 Canvas.
-- **Responsive Design**: Play seamlessly on both desktop and mobile devices.
-- **Dual Controls**:
-    - **Keyboard**: Use `Arrow Keys` or `WASD` for precise movement.
-    - **Touch**: Intuitive swipe controls for mobile players.
-- **Persistent High Score**: Your highest score is saved locally in your browser's `localStorage`, so you can always aim to beat your personal best.
-- **Dynamic Difficulty**: The snake's speed increases as you eat more food, making the game progressively more challenging.
-- **Pause/Resume**: Press the 'P' key to pause the game at any time.
+- **Jogabilidade Clássica da Cobrinha**: A diversão atemporal de guiar uma cobra crescente para comer comida.
+- **Tema de Fogo Imersivo**: Uma estética visualmente impressionante com uma paleta de cores escuras e ardentes e efeitos de brilho alimentados pelo Canvas HTML5.
+- **Design Responsivo**: Jogue perfeitamente em dispositivos desktop e móveis.
+- **Controles Duplos**:
+  - **Teclado**: Use as `Setas` ou `WASD` para um movimento preciso.
+  - **Toque**: Controles de deslize intuitivos para jogadores móveis.
+- **Pontuação Máxima Persistente**: Sua pontuação mais alta é salva localmente no `localStorage` do seu navegador, para que você possa sempre tentar bater seu recorde pessoal.
+- **Dificuldade Dinâmica**: A velocidade da cobra aumenta à medida que você come mais comida, tornando o jogo progressivamente mais desafiador.
+- **Pausar/Retomar**: Pressione a tecla 'P' para pausar o jogo a qualquer momento.
 
-## How to Play
+## Como Jogar
 
-### Objective
-Your goal is to eat the glowing yellow food to grow your snake as long as possible and achieve the highest score. The game ends if the snake runs into the walls or its own body.
+### Objetivo
 
-### Controls
+Seu objetivo é comer a comida amarela brilhante para fazer sua cobra crescer o máximo possível e alcançar a pontuação mais alta. O jogo termina se a cobra bater nas paredes ou em seu próprio corpo.
+
+### Controles
+
 - **Desktop**:
-    - **Move Up**: `ArrowUp` or `W`
-    - **Move Down**: `ArrowDown` or `S`
-    - **Move Left**: `ArrowLeft` or `A`
-    - **Move Right**: `ArrowRight` or `D`
-    - **Pause/Resume**: `P`
-- **Mobile**:
-    - **Swipe** in the direction you want the snake to move.
+  - **Mover para Cima**: `Seta para Cima` ou `W`
+  - **Mover para Baixo**: `Seta para Baixo` ou `S`
+  - **Mover para a Esquerda**: `Seta para a Esquerda` ou `A`
+  - **Mover para a Direita**: `Seta para a Direita` ou `D`
+  - **Pausar/Retomar**: `P`
+- **Móvel**:
+  - **Deslize** na direção que você quer que a cobra se mova.
 
-## Tech Stack
+## Tecnologias Utilizadas
 
-- **Frontend**: [React](https://reactjs.org/) with [TypeScript](https://www.typescriptlang.org/)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/) (via CDN)
-- **Rendering**: HTML5 `<canvas>` for the game board.
-- **Module System**: ES Modules with `importmap` for dependency management in the browser.
+- **Frontend**: [React](https://reactjs.org/) com [TypeScript](https://www.typescriptlang.org/)
+- **Estilização**: [Tailwind CSS](https://tailwindcss.com/) (via CDN)
+- **Renderização**: `<canvas>` HTML5 para o tabuleiro do jogo.
+- **Sistema de Módulos**: Módulos ES com `importmap` para gerenciamento de dependências no navegador.
 
-## Project Structure
+## Estrutura do Projeto
 
 ```
 .
-├── index.html              # Main HTML file, loads scripts and styles
-├── index.tsx               # React application entry point
-├── App.tsx                 # Main component, handles game state logic (Start, Playing, GameOver)
-├── constants.ts            # Game constants (grid size, speed, colors)
-├── types.ts                # TypeScript interfaces and enums
-├── metadata.json           # Application metadata
+├── index.html              # Arquivo HTML principal, carrega scripts e estilos
+├── index.tsx               # Ponto de entrada da aplicação React
+├── App.tsx                 # Componente principal, lida com a lógica de estado do jogo (Início, Jogando, Fim de Jogo)
+├── constants.ts            # Constantes do jogo (tamanho da grade, velocidade, cores)
+├── types.ts                # Interfaces e enums do TypeScript
+├── metadata.json           # Metadados da aplicação
 └── components/
-    ├── GameBoard.tsx       # The core game canvas, handling rendering and game logic
-    ├── GameOverScreen.tsx  # The screen displayed when the game ends
-    ├── Scoreboard.tsx      # Displays current and high scores during gameplay
-    └── StartScreen.tsx     # The initial screen to start the game and view instructions
+    ├── GameBoard.tsx       # O canvas principal do jogo, lidando com a renderização e a lógica do jogo
+    ├── GameOverScreen.tsx  # A tela exibida quando o jogo termina
+    ├── Scoreboard.tsx      # Exibe as pontuações atual e máxima durante o jogo
+    └── StartScreen.tsx     # A tela inicial para começar o jogo e ver as instruções
 ```
 
-## How to Run Locally
+## Como Executar Localmente
 
-This project is set up to run without a complex build process.
+Este projeto está configurado para ser executado sem um processo de compilação complexo.
 
-1.  Ensure you have all the project files in a single directory.
-2.  You need to serve the files using a simple local web server because browsers restrict `file://` access for security reasons.
-    - **Using Python**: If you have Python installed, navigate to the project directory in your terminal and run: `python -m http.server`
-    - **Using Node.js**: If you have Node.js, you can install a simple server package globally: `npm install -g serve` and then run `serve .` in the project directory.
-    - **Using VS Code**: The [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) extension is an excellent option. Simply right-click on `index.html` and choose "Open with Live Server".
-3.  Open your web browser and navigate to the local URL provided by the server (e.g., `http://localhost:8000` or `http://127.0.0.1:5500`).
+1. Certifique-se de ter todos os arquivos do projeto em um único diretório.
+2. Você precisa servir os arquivos usando um servidor web local simples, porque os navegadores restringem o acesso a `file://` por razões de segurança.
+    - **Usando Python**: Se você tiver o Python instalado, navegue até o diretório do projeto no seu terminal e execute: `python -m http.server`
+    - **Usando Node.js**: Se você tiver o Node.js, pode instalar um pacote de servidor simples globalmente: `npm install -g serve` e depois executar `serve .` no diretório do projeto.
+    - **Usando o VS Code**: A extensão [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) é uma excelente opção. Simplesmente clique com o botão direito em `index.html` e escolha "Open with Live Server".
+3. Abra seu navegador e navegue para o URL local fornecido pelo servidor (por exemplo, `http://localhost:8000` ou `http://127.0.0.1:5500`).
 
-## Deploying to Vercel
+## Implantando no Vercel
 
-You can deploy this project for free on [Vercel](https://vercel.com/). Since there's no build step, you'll configure it as a simple static site.
+Você pode implantar este projeto gratuitamente no [Vercel](https://vercel.com/). Como não há etapa de compilação, você o configurará como um site estático simples.
 
-### Prerequisites
-- A [Vercel account](https://vercel.com/signup).
-- The project pushed to a Git repository (GitHub, GitLab, or Bitbucket).
+### Pré-requisitos
 
-### Steps
+- Uma [conta no Vercel](https://vercel.com/signup).
+- O projeto enviado para um repositório Git (GitHub, GitLab ou Bitbucket).
 
-1.  **New Project on Vercel**:
-    - Go to your Vercel Dashboard.
-    - Click on the "Add New..." button and select "Project".
+### Passos
 
-2.  **Import Git Repository**:
-    - Import the Git repository where you pushed the project code.
+1. **Novo Projeto no Vercel**:
+    - Vá para o seu Painel Vercel.
+    - Clique no botão "Add New..." e selecione "Project".
 
-3.  **Configure Project**:
-    - Vercel will try to detect the framework. It might not find one, which is correct.
-    - Expand the **"Build and Output Settings"** section.
-    - Set the **"Framework Preset"** to **`Other`**.
-    - **Leave the "Build Command" empty**. This is the most important step, as our project doesn't need to be built.
-    - **Leave the "Output Directory" empty** or ensure it's set to the default. Vercel will automatically serve the content from the root directory.
-    - You do not need to override the "Install Command".
+2. **Importar Repositório Git**:
+    - Importe o repositório Git onde você enviou o código do projeto.
 
-4.  **Deploy**:
-    - Click the "Deploy" button.
-    - Vercel will deploy your site and provide you with a URL. The deployment should be very fast since it's only serving static files.
+3. **Configurar Projeto**:
+    - O Vercel tentará detectar o framework. Ele pode não encontrar um, o que está correto.
+    - Expanda a seção **"Build and Output Settings"**.
+    - Defina o **"Framework Preset"** como **`Other`**.
+    - **Deixe o "Build Command" vazio**. Este é o passo mais importante, pois nosso projeto não precisa ser compilado.
+    - **Deixe o "Output Directory" vazio** ou certifique-se de que está definido para o padrão. O Vercel servirá automaticamente o conteúdo do diretório raiz.
+    - Você não precisa substituir o "Install Command".
+
+4. **Implantar**:
+    - Clique no botão "Deploy".
+    - O Vercel implantará seu site e fornecerá um URL. A implantação deve ser muito rápida, pois está apenas servindo arquivos estáticos.
