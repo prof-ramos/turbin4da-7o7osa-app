@@ -1,20 +1,27 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import GameBoard from './components/GameBoard';
-import StartScreen from './components/StartScreen';
 import GameOverScreen from './components/GameOverScreen';
 import Scoreboard from './components/Scoreboard';
-import { GameState } from './types';
+import StartScreen from './components/StartScreen';
+import { GameState, HighScoreRecord } from './types';
 
 const App: React.FC = () => {
   const [gameState, setGameState] = useState<GameState>(GameState.Start);
   const [score, setScore] = useState(0);
-  const [highScore, setHighScore] = useState(0);
+  const [highScore, setHighScore] = useState<HighScoreRecord>({ score: 0, playerName: '' });
   const [gameKey, setGameKey] = useState(0); // Used to reset the game
 
   useEffect(() => {
     const storedHighScore = localStorage.getItem('snakeHighScore');
     if (storedHighScore) {
-      setHighScore(parseInt(storedHighScore, 10));
+      try {
+        const parsedHighScore = JSON.parse(storedHighScore);
+        setHighScore(parsedHighScore);
+      } catch (e) {
+        // If parsing fails, it means we have old data format (just a number)
+        // Convert it to the new format
+        setHighScore({ score: parseInt(storedHighScore, 10), playerName: '' });
+      }
     }
   }, []);
 
@@ -26,13 +33,15 @@ const App: React.FC = () => {
 
   const handleGameOver = useCallback((finalScore: number) => {
     setScore(finalScore);
-    if (finalScore > highScore) {
-      setHighScore(finalScore);
-      localStorage.setItem('snakeHighScore', finalScore.toString());
+    if (finalScore > highScore.score) {
+      const playerName = prompt('Novo recorde! Digite seu nome:') || 'Anônimo';
+      const newHighScore: HighScoreRecord = { score: finalScore, playerName };
+      setHighScore(newHighScore);
+      localStorage.setItem('snakeHighScore', JSON.stringify(newHighScore));
     }
     setGameState(GameState.GameOver);
   }, [highScore]);
-  
+
   const renderContent = () => {
     switch (gameState) {
       case GameState.Start:

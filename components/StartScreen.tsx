@@ -1,8 +1,9 @@
 import React from 'react';
+import { HighScoreRecord } from '../types';
 
 interface StartScreenProps {
   onStart: () => void;
-  highScore: number;
+  highScore: HighScoreRecord;
 }
 
 const StartScreen: React.FC<StartScreenProps> = ({ onStart, highScore }) => {
@@ -10,7 +11,10 @@ const StartScreen: React.FC<StartScreenProps> = ({ onStart, highScore }) => {
     <div className="absolute inset-0 bg-[#1A0000] flex flex-col justify-center items-center p-8 rounded-lg">
       <div className="text-center">
         <h2 className="text-2xl md:text-3xl font-bold uppercase mb-4">High Score</h2>
-        <p className="text-4xl md:text-5xl font-black text-[#FFD700] tracking-wider">{highScore}</p>
+        <p className="text-4xl md:text-5xl font-black text-[#FFD700] tracking-wider">{highScore.score}</p>
+        {highScore.playerName && (
+          <p className="text-lg md:text-xl font-bold text-gray-300 mt-2">por {highScore.playerName}</p>
+        )}
       </div>
       <button
         onClick={onStart}
