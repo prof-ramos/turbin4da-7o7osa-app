@@ -39,8 +39,36 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Interceptar requests
+ // Interceptar requests
 self.addEventListener('fetch', (event) => {
+  // SPA navigation fallback: se a navegação falhar (offline/erro), retornar index.html do cache
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      (async () => {
+        try {
+          // Tenta buscar da rede primeiro para obter a versão mais recente da página
+          const networkResponse = await fetch(event.request);
+          return networkResponse;
+        } catch (err) {
+          // Offline/erro de rede: usa fallback para o index.html em cache
+          const cache = await caches.open(CACHE_NAME);
+          const cachedIndex = await cache.match('/index.html');
+          if (cachedIndex) {
+            return cachedIndex;
+          }
+          // Se não houver index.html no cache, tenta qualquer resposta em cache para a requisição
+          const cachedAny = await caches.match(event.request);
+          if (cachedAny) {
+            return cachedAny;
+          }
+          // Como último recurso, retorna uma resposta genérica
+          return new Response('Offline', { status: 503, statusText: 'Offline' });
+        }
+      })()
+    );
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
@@ -73,8 +101,10 @@ self.addEventListener('fetch', (event) => {
 // Atualizar Service Worker
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
+    (async () => {
+      // Limpa caches antigos
+      const cacheNames = await caches.keys();
+      await Promise.all(
         cacheNames.map((cacheName) => {
           if (cacheName !== CACHE_NAME) {
             console.log('Removendo cache antigo:', cacheName);
@@ -82,7 +112,9 @@ self.addEventListener('activate', (event) => {
           }
         })
       );
-    })
+      // Garante que o SW recém-ativado assuma o controle das abas existentes
+      await self.clients.claim();
+    })()
   );
 });
 
@@ -183,75 +215,7 @@ const manifest = {
   }
 };
 
-// Salvar manifest como JSON
+ // Salvar manifest como JSON
 // Este conteúdo deve ser salvo em manifest.json
 console.log('Manifest PWA:', JSON.stringify(manifest, null, 2));
-
-// index.html - HTML atualizado com PWA
-const htmlContent = `<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-    <title>Turbin4da 7o7osa - Jogo da Cobrinha</title>
-    
-    <!-- PWA Meta Tags -->
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#ea580c">
-    <meta name="background-color" content="#1f2937">
-    <meta name="display" content="standalone">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Turbin4da 7o7osa">
-    
-    <!-- SEO e Descrições -->
-    <meta name="description" content="Uma reinterpretação moderna do clássico jogo da Cobrinha, com tema de fogo e controles otimizados para mobile">
-    <meta name="keywords" content="jogo, cobrinha, snake, mobile, touch, PWA, fogo, arcade">
-    <meta name="author" content="Gabriel Ramos">
-    
-    <!-- Open Graph -->
-    <meta property="og:title" content="Turbin4da 7o7osa - Jogo da Cobrinha">
-    <meta property="og:description" content="Jogo da cobrinha com tema de fogo e controles mobile">
-    <meta property="og:type" content="game">
-    <meta property="og:url" content="https://seu-dominio.com">
-    <meta property="og:image" content="https://seu-dominio.com/og-image.png">
-    
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Turbin4da 7o7osa">
-    <meta name="twitter:description" content="Jogo da cobrinha com tema de fogo">
-    <meta name="twitter:image" content="https://seu-dominio.com/twitter-image.png">
-    
-    <!-- Favicon e Ícones -->
-    <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
-    <link rel="mask-icon" href="icons/safari-pinned-tab.svg" color="#ea580c">
-    
-    <!-- Preload de recursos críticos -->
-    <link rel="preload" href="https://unpkg.com/react@18/umd/react.production.min.js" as="script">
-    <link rel="preload" href="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" as="script">
-    <link rel="preload" href="styles/mobile.css" as="style">
-    
-    <!-- Estilos -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="styles/mobile.css">
-    
-    <!-- Configuração do Tailwind -->
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    animation: {
-                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'bounce-slow': 'bounce 2s infinite',
-                        'spin-slow': 'spin 3s linear infinite',
-                    }
-                }
-            }
-        }
-    </script>
-    
-    <!-- Importmap para módulos ES -->
-    
+ // Removido conteúdo HTML embutido que estava quebrando o arquivo JS.

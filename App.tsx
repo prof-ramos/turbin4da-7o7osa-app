@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import GameBoard from './components/GameBoard';
 import GameOverScreen from './components/GameOverScreen';
+import MobileTutorial from './components/MobileTutorial';
 import Scoreboard from './components/Scoreboard';
 import StartScreen from './components/StartScreen';
 import { GameState, HighScoreRecord } from './types';
@@ -9,9 +10,22 @@ const App: React.FC = () => {
   const [gameState, setGameState] = useState<GameState>(GameState.Start);
   const [score, setScore] = useState(0);
   const [highScore, setHighScore] = useState<HighScoreRecord>({ score: 0, playerName: '' });
-  const [gameKey, setGameKey] = useState(0); // Used to reset the game
+  const [gameKey, setGameKey] = useState(0);
+  const [showTutorial, setShowTutorial] = useState(false);
+
+  const isMobile = () => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth <= 768;
+    }
+    return false;
+  };
 
   useEffect(() => {
+    const tutorialShown = localStorage.getItem('tutorialShown');
+    if (isMobile() && !tutorialShown) {
+      setShowTutorial(true);
+    }
+
     const storedHighScore = localStorage.getItem('snakeHighScore');
     if (storedHighScore) {
       try {
@@ -42,7 +56,16 @@ const App: React.FC = () => {
     setGameState(GameState.GameOver);
   }, [highScore]);
 
+  const handleTutorialClose = () => {
+    setShowTutorial(false);
+    localStorage.setItem('tutorialShown', 'true');
+  };
+
   const renderContent = () => {
+    if (showTutorial) {
+      return <MobileTutorial onClose={handleTutorialClose} />;
+    }
+
     switch (gameState) {
       case GameState.Start:
         return <StartScreen onStart={handleStartGame} highScore={highScore} />;

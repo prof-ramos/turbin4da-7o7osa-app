@@ -103,7 +103,7 @@ Este documento descreve a arquitetura do sistema do projeto React/TypeScript emp
 
 - Props/callbacks entre componentes (React).
 - Event handlers (teclado/toque) traduzidos para `InputAction`.
-- PWA/Service Worker para caching de assets.
+- PWA/Service Worker para caching de assets, atualização versionada e fallback offline seguro.
 
 ### Dependências externas
 
@@ -169,6 +169,7 @@ Este documento descreve a arquitetura do sistema do projeto React/TypeScript emp
   - Decisão: estado local no App para simplicidade; escalável depois.
 - PWA:
   - Decisão: habilitar instalação/offline com baixo overhead de manutenção do SW.
+  - Política de atualização do SW: ver seção "Política de atualização do Service Worker (SW)".
 - Mobile-first:
   - Decisão: módulos e estilos dedicados melhoram UX em telas pequenas.
 
@@ -197,6 +198,7 @@ Este documento descreve a arquitetura do sistema do projeto React/TypeScript emp
   - Centralizar input em `mobile_controls` e aplicar CSS responsivo.
 - Cache PWA desatualizado:
   - Versionar assets e implementar atualização de SW com skipWaiting/clientsClaim quando apropriado.
+  - Adotar fallback de navegação para index.html em falhas de rede quando aplicável.
 
 ### Lições aprendidas
 
@@ -297,8 +299,9 @@ User Input -> mobile_controls -> GameBoard.logic -> onScore/onGameOver -> App.st
   - Acesso a APIs como Vibration, Fullscreen, Screen Orientation (progressivo).
 
 - pwa_files.js
-  - Registro do Service Worker.
+  - Registro do Service Worker e manifest.
   - Estratégias de cache para assets estáticos e fallback básico.
+  - Implementa versão de cache, remoção de caches antigos, e suporte a skipWaiting/clientsClaim via mensagem.
 
 - index.html / index.tsx / vite.config.ts / tsconfig.json
   - Bootstrap da aplicação, ponto de entrada React, configurações de build e TS.
@@ -326,6 +329,89 @@ User Input -> mobile_controls -> GameBoard.logic -> onScore/onGameOver -> App.st
 - InputAction: ação mapeada a partir de eventos de input (Left, Right, Up, Down, Tap, Hold, Pause).
 - PWA: Progressive Web App — app web instalável com suporte offline.
 - Service Worker: script que intercepta requisições de rede para caching/offline.
+
+---
+
+## 6. Política de atualização do Service Worker (SW)
+
+Esta seção documenta a política de versão, atualização e fallback do Service Worker para evitar problemas de “stale cache”.
+
+Resumo das decisões
+
+- Versionamento de cache: cada release atualiza o sufixo do CACHE_NAME (ex.: turbin4da-7o7osa-v1 → -v2).
+- Estratégia de cache:
+  - Pré-cache de assets essenciais durante install (cache-first para assets estáticos).
+  - Network-first com cache de preenchimento para requests não encontrados (dinâmico com cache.put).
+- Limpeza de caches antigos: na fase activate, todos os caches cujo nome difira do CACHE_NAME atual são removidos.
+- Atualização imediata (opcional): suportamos skipWaiting via mensagem do cliente para promover o SW recém-instalado.
+- Assumir o controle dos clientes: após a ativação, o SW deve adotar clientsClaim para controlar imediatamente as abas abertas.
+- Fallback offline:
+  - Para navegação (navegations), caso a rede falhe e não haja cache, retornar index.html (SPA fallback), quando configurado.
+  - Para assets, retornar do cache quando disponível; caso contrário, falha explícita.
+
+Versão e empacotamento
+
+- O arquivo pwa_files.js define const CACHE_NAME = 'turbin4da-7o7osa-v1'. Ao lançar uma nova versão:
+  1) Atualizar o sufixo da versão em CACHE_NAME.
+  2) Garantir que a lista de urlsToCache inclua somente caminhos válidos gerados no build (prod prefere arquivos estáticos do dist/).
+  3) Fazer deploy do novo SW; navegadores instalarão o novo worker em paralelo, mantendo o antigo atendendo as abas existentes até a ativação.
+
+Ciclo de vida e promoção do SW
+
+- install: abre o cache atual e adiciona os arquivos essenciais (precache).
+- activate:
+  - Deleta caches cujo nome não corresponda ao CACHE_NAME atual.
+  - clientsClaim(): o SW passa a controlar imediatamente as páginas ativas (evita período sem cobertura do SW novo).
+- fetch:
+  - cache-first para assets presentes no cache (retorna rápido e offline-friendly).
+  - Em falta no cache, tenta rede; em sucesso, clona e armazena no cache atual (cache de preenchimento).
+  - Em falha de rede:
+    - Se request é de navegação (mode 'navigate'), tentar retornar index.html do cache (SPA fallback).
+    - Caso contrário, retornar erro padrão (ou um fallback específico se configurado).
+
+Atualização imediata com skipWaiting e clientsClaim
+
+- Por padrão, o SW novo entra em estado “waiting” até que todas as abas com o SW antigo sejam fechadas.
+- Para forçar a atualização:
+  - O cliente envia postMessage({ type: 'SKIP_WAITING' }) para o SW.
+  - No SW: self.addEventListener('message', e => { if (e.data?.type === 'SKIP_WAITING') self.skipWaiting(); });
+  - Após a ativação, chamar self.clients.claim() para assumir controle das abas abertas, reduzindo janelas de inconsistência.
+- Recomendação de UI: opcionalmente exibir um toast “Atualização disponível. Recarregar?”; ao aceitar, enviar SKIP_WAITING e depois window.location.reload() quando o novo controller estiver ativo.
+
+Evitar stale cache
+
+- Sempre alterar CACHE_NAME em releases que mudem assets.
+- Considerar incluir hash de conteúdo no nome dos arquivos (build) para invalidar seletivamente.
+- Manter a lista urlsToCache alinhada ao build de produção, evitando referenciar fontes de desenvolvimento (.tsx/.ts).
+- Limpar caches antigos na ativação (já implementado).
+- Validar que o SW registra e atualiza sob HTTPS/escopo correto.
+
+Implementação de referência
+
+- Arquivo: pwa_files.js
+  - CACHE_NAME e install/fetch/activate/message listeners.
+  - Remoção de caches antigos e skipWaiting.
+  - Sugerido adicionar, após activate: self.clients.claim();
+  - Sugerido aprimorar fetch para fallback de navegação:
+    Exemplo (conceitual):
+      if (event.request.mode === 'navigate') {
+        event.respondWith(
+          fetch(event.request).catch(() => caches.match('/index.html'))
+        );
+        return;
+      }
+
+Alinhamento com o código atual
+
+- pwa_files.js já:
+  - Versiona o cache via CACHE_NAME.
+  - Faz precache com cache.addAll(urlsToCache).
+  - Remove caches antigos em activate.
+  - Suporta skipWaiting via mensagem.
+- Ações recomendadas:
+  - Adicionar clientsClaim no activate.
+  - Adotar fallback de navegação para index.html (SPA offline mais robusto).
+  - Revisar urlsToCache para usar assets do build final (dist) em produção.
 
 ---
 
