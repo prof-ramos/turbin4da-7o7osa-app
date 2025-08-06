@@ -10,7 +10,7 @@ interface GameOverScreenProps {
 const GameOverScreen: React.FC<GameOverScreenProps> = ({ score, highScore, onRestart }) => {
   return (
     <div className="absolute inset-0 bg-black bg-opacity-70 flex flex-col justify-center items-center p-8 rounded-lg text-center backdrop-blur-sm">
-      <h2 className="text-5xl md:text-6xl font-black text-[#FF4500] uppercase tracking-widest" style={{textShadow: '0 0 10px #FF4500'}}>Game Over</h2>
+      <h2 className="text-5xl md:text-6xl font-black text-[#FF4500] uppercase tracking-widest" style={{textShadow: '0 0 10px #FF4500'}}>Se fodeu</h2>
       <div className="my-8">
         <h3 className="text-xl md:text-2xl font-bold text-gray-300">Sua Pontuação</h3>
         <p className="text-4xl md:text-5xl font-black text-white">{score}</p>
