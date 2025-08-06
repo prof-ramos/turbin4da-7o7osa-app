@@ -20,9 +20,11 @@ const App: React.FC = () => {
     return false;
   };
 
+  const isMobileMemoized = isMobile();
+
   useEffect(() => {
     const tutorialShown = localStorage.getItem('tutorialShown');
-    if (isMobile() && !tutorialShown) {
+    if (isMobileMemoized && !tutorialShown) {
       setShowTutorial(true);
     }
 

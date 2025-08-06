@@ -126,96 +126,14 @@ self.addEventListener('message', (event) => {
 });
 
 // manifest.json - Manifest para PWA
-const manifest = {
-  "name": "Turbin4da 7o7osa - Jogo da Cobrinha",
-  "short_name": "Turbin4da 7o7osa",
-  "description": "Uma reinterpretação moderna do clássico jogo da Cobrinha, com tema de fogo e controles otimizados para mobile",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#1f2937",
-  "theme_color": "#ea580c",
-  "orientation": "any",
-  "categories": ["games", "entertainment"],
-  "lang": "pt-BR",
-  "dir": "ltr",
-  "scope": "/",
-  "icons": [
-    {
-      "src": "icons/icon-72x72.png",
-      "sizes": "72x72",
-      "type": "image/png",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "icons/icon-96x96.png",
-      "sizes": "96x96",
-      "type": "image/png",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "icons/icon-128x128.png",
-      "sizes": "128x128",
-      "type": "image/png",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "icons/icon-144x144.png",
-      "sizes": "144x144",
-      "type": "image/png",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "icons/icon-152x152.png",
-      "sizes": "152x152",
-      "type": "image/png",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "icons/icon-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "icons/icon-384x384.png",
-      "sizes": "384x384",
-      "type": "image/png",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "icons/icon-512x512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable any"
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "screenshots/gameplay-mobile.png",
-      "sizes": "390x844",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Gameplay no mobile com controles touch"
-    },
-    {
-      "src": "screenshots/gameplay-desktop.png",
-      "sizes": "1920x1080",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Gameplay no desktop"
-    }
-  ],
-  "features": [
-    "Cross Platform",
-    "VibrationAPI"
-  ],
-  "prefer_related_applications": false,
-  "edge_side_panel": {
-    "preferred_width": 400
-  }
-};
-
- // Salvar manifest como JSON
-// Este conteúdo deve ser salvo em manifest.json
-console.log('Manifest PWA:', JSON.stringify(manifest, null, 2));
+// Fetch manifest from external manifest.json file
+fetch('/manifest.json')
+  .then(response => response.json())
+  .then(manifest => {
+    console.log('Manifest PWA:', manifest);
+    // Use the manifest object as needed
+  })
+  .catch(error => {
+    console.error('Error fetching manifest:', error);
+  });
  // Removido conteúdo HTML embutido que estava quebrando o arquivo JS.
