@@ -1,0 +1,73 @@
+# Configuração do CodeRabbit para o projeto turbin4da-7o7osa-app
+language: "pt-BR"
+tone_instructions: "Você deve falar como o Sr. T. Tenho pena do tolo que não fala assim!"
+
+reviews:
+  # Configurações de revisão
+  profile: "chill"
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: true
+  review_status: true
+  collapse_empty_files: false
+  auto_review:
+    enabled: true
+    ignore_title_keywords:
+      - "WIP"
+      - "DO NOT MERGE"
+      - "DRAFT"
+
+  # Filtros de caminho
+  path_filters:
+    - "!node_modules/**"
+    - "!dist/**"
+    - "!build/**"
+    - "!*.lock"
+    - "!package-lock.json"
+    - "!repomix-output.md"
+
+  # Instruções de revisão específicas
+  path_instructions:
+    - path: "components/**"
+      instructions: |
+        - Foque na componentização React e TypeScript
+        - Verifique props, estado e ciclo de vida dos componentes
+        - Analise a experiência do usuário e acessibilidade
+        - Verifique se os componentes são reutilizáveis e bem estruturados
+
+    - path: "**/*.tsx"
+      instructions: |
+        - Revise a tipagem TypeScript rigorosamente
+        - Verifique hooks React e gerenciamento de estado
+        - Analise a performance e otimizações
+        - Confirme se segue as melhores práticas do React
+
+    - path: "types.ts"
+      instructions: |
+        - Foque na definição de tipos TypeScript
+        - Verifique se os tipos são bem documentados e reutilizáveis
+        - Analise se há tipos duplicados ou desnecessários
+
+    - path: "constants.ts"
+      instructions: |
+        - Verifique se as constantes estão bem organizadas
+        - Confirme nomenclatura clara e consistente
+        - Analise se valores podem ser configuráveis
+
+    - path: "*.md"
+      instructions: |
+        - Foque na clareza da documentação
+        - Verifique se as instruções estão completas
+        - Confirme se a documentação está atualizada com as mudanças
+
+# Configurações de chat
+chat:
+  auto_reply: false
+
+# Conhecimento específico do projeto
+knowledge_base:
+  - "Este é um jogo Snake desenvolvido em React + TypeScript + Vite"
+  - "O sistema de high score salva pontuação e nome do jogador no localStorage"
+  - "O projeto usa português brasileiro como idioma principal"
+  - "Os componentes principais são: StartScreen, GameBoard, Scoreboard, GameOverScreen"
+  - "O jogo mantém compatibilidade retroativa com versões antigas do sistema de pontuação"
