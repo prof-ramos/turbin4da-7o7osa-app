@@ -16,3 +16,8 @@ export enum Direction {
   Left,
   Right,
 }
+
+export interface HighScoreRecord {
+  score: number;
+  playerName: string;
+}

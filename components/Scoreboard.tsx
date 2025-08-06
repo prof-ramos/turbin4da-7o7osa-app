@@ -1,8 +1,9 @@
 import React from 'react';
+import { HighScoreRecord } from '../types';
 
 interface ScoreboardProps {
   score: number;
-  highScore: number;
+  highScore: HighScoreRecord;
 }
 
 const Scoreboard: React.FC<ScoreboardProps> = ({ score, highScore }) => {
@@ -14,7 +15,10 @@ const Scoreboard: React.FC<ScoreboardProps> = ({ score, highScore }) => {
       </div>
       <div className="text-center">
         <span className="text-lg md:text-xl font-bold uppercase text-gray-300">High Score</span>
-        <p className="text-2xl md:text-3xl font-black text-[#FFD700]">{highScore}</p>
+        <p className="text-2xl md:text-3xl font-black text-[#FFD700]">{highScore.score}</p>
+        {highScore.playerName && (
+          <p className="text-sm md:text-base font-bold text-gray-300 mt-1">por {highScore.playerName}</p>
+        )}
       </div>
     </div>
   );
